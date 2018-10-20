@@ -1,0 +1,24 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\IAJ.Unity\Pathfinding\AStartPathfinding.cs">
+    <Files>
+      <File FileName="Assets\Scripts\PathfindingManager.cs" Line="33" Column="22" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\AStartPathfinding.cs" Line="69" Column="4" />
+      <File FileName="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Utils\ScriptableObjectUtility.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Utils\SerializableDictionary.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\Path\Path.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\Path\LocalPath.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\Path\GlobalPath.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\Path\LineSegmentPath.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\IAJ.Unity\Pathfinding\DataStructures\NodeRecord.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="D:\Dropbox\IAJ 2017-2018\Laboratórios\proj3\Assets\Editor\IAJMenuItems.cs" line="29" column="16" />
+      <Breakpoint file="D:\Dropbox\IAJ 2017-2018\Laboratórios\proj3\Assets\Editor\IAJMenuItems.cs" line="40" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
