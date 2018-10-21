@@ -7,6 +7,7 @@ using RAIN.Navigation.NavMesh;
 using RAIN.Navigation.Graph;
 using UnityEditor;
 using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures;
+using Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding;
 
 public class PathfindingManager : MonoBehaviour {
 
@@ -49,6 +50,7 @@ public class PathfindingManager : MonoBehaviour {
          
 		//this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new AStarPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new NodePriorityHeap(), new DictionaryList(), new ZeroHeuristic()));
         this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new NodeArrayAStarPathFinding(NavigationManager.Instance.NavMeshGraphs[0], new ZeroHeuristic()));
+        //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new GoalBoundingPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new ZeroHeuristic(), AssetDatabase.LoadAssetAtPath<Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.GoalBoundingTable>("Assets/Resources/GoalBoundingTable.asset")));
     }
 
     // Update is called once per frame
