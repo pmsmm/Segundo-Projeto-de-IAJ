@@ -37,8 +37,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
-            this.NodeGoalBounds = nodeGoalBounds;
-            this.NodeGoalBounds.connectionBounds = new Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[startNode.OutEdgeCount];
             IDs = new List<List<int>>(startNode.OutEdgeCount);
 
             NodeRecord[] initialOpen = this.Open.All().ToArray();
