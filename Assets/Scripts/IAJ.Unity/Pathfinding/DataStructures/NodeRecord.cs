@@ -14,6 +14,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures
     {
         public NavigationGraphNode node;
         public NodeRecord parent;
+        public int id = -1;
         public float gValue;
         public float hValue;
         public float fValue;

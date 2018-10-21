@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{76EC9197-08AD-3B89-75E6-3086CF8DD12A}</ProjectGuid>
+    <ProjectGuid>{71672F88-DC22-2E4C-52EF-B0B6ED7846D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -93,16 +93,16 @@
     <Compile Include="Assets\Scripts\PathfindingManager.cs" />
     <None Include="Assets\RAIN\ReleaseNotes.txt" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/ProgramFiles/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -303,10 +303,10 @@
       <HintPath>D:/ProgramFiles/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="RAIN">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Assets/RAIN/RAIN.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Assets/RAIN/RAIN.dll</HintPath>
     </Reference>
     <Reference Include="RAINMetaform">
-      <HintPath>D:/GitHub/Unity Projects/IAJ Pathfinding 3.1/Assets/RAIN/RAINMetaform.dll</HintPath>
+      <HintPath>D:/GitHub/Unity Projects/Segundo-Projeto-de-IAJ/Assets/RAIN/RAINMetaform.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/gonca/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
