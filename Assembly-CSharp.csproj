@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\DataStructures\SimpleUnorderedNodeList.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\GoalBounding\GoalBoundingPathfinding.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\GoalBounding\GoalBoundsDijkstraMapFlooding.cs" />
+    <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\Heuristics\EucledianDistanceHeuristic.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\Heuristics\IHeuristic.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\Heuristics\ZeroHeuristic.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\NodeArrayAStarPathfinding.cs" />
