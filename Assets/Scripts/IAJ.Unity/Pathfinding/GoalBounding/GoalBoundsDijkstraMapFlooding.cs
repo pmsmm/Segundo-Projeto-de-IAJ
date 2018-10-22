@@ -88,10 +88,10 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds = this.NodeGoalBounds.connectionBounds[index];
 
-            bounds.maxx = (position.x > bounds.maxx) ? position.x : bounds.maxx;
-            bounds.minx = (position.x < bounds.minx) ? position.x : bounds.minx;
-            bounds.maxz = (position.z > bounds.maxz) ? position.z : bounds.maxz;
-            bounds.minz = (position.z < bounds.minz) ? position.z : bounds.minz;
+            bounds.maxx = (position.x > bounds.maxx) ? position.x : bounds.maxx + 1f;
+            bounds.minx = (position.x < bounds.minx) ? position.x : bounds.minx - 1f;
+            bounds.maxz = (position.z > bounds.maxz) ? position.z : bounds.maxz + 1f;
+            bounds.minz = (position.z < bounds.minz) ? position.z : bounds.minz - 1f;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)
