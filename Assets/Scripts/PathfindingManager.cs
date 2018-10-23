@@ -1,13 +1,14 @@
 ﻿using Assets.Scripts.IAJ.Unity.Pathfinding;
+using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures;
+using Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding;
 using Assets.Scripts.IAJ.Unity.Pathfinding.Heuristics;
 using Assets.Scripts.IAJ.Unity.Pathfinding.Path;
+using System.Collections.Generic;
 using UnityEngine;
 using RAIN.Navigation;
 using RAIN.Navigation.NavMesh;
 using RAIN.Navigation.Graph;
 using UnityEditor;
-using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures;
-using Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding;
 
 public class PathfindingManager : MonoBehaviour {
 
@@ -21,6 +22,8 @@ public class PathfindingManager : MonoBehaviour {
     public GameObject p4;
     public GameObject p5;
     public GameObject p6;
+    public float characterRadius = 1f;
+    public LayerMask obstacleMask;
 
 	//private fields for internal use only
 	private Vector3 startPosition;
@@ -30,6 +33,7 @@ public class PathfindingManager : MonoBehaviour {
     
     private GlobalPath currentSolution;
     private bool draw;
+    private bool finished = false;
 
     //public properties
     public AStarPathfinding AStarPathFinding { get; private set; }
@@ -48,9 +52,9 @@ public class PathfindingManager : MonoBehaviour {
 	{
         this.currentClickNumber = 1;
 
-        //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new AStarPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new NodePriorityHeap(), new DictionaryList(), new EucledianDistanceHeuristic()));
+        this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new AStarPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new NodePriorityHeap(), new DictionaryList(), new EucledianDistanceHeuristic()));
         //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new NodeArrayAStarPathFinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic()));
-        this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new GoalBoundingPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic(), AssetDatabase.LoadAssetAtPath<Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.GoalBoundingTable>("Assets/Resources/GoalBoundingTable.asset")));
+        //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new GoalBoundingPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic(), AssetDatabase.LoadAssetAtPath<Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.GoalBoundingTable>("Assets/Resources/GoalBoundingTable.asset")));
     }
 
     // Update is called once per frame
@@ -85,6 +89,7 @@ public class PathfindingManager : MonoBehaviour {
                     this.currentClickNumber = 1;
                     this.endPosition = position;
                     this.draw = true;
+                    this.finished = false;
                     //initialize the search algorithm
                     this.AStarPathFinding.InitializePathfindingSearch(this.startPosition, this.endPosition);
                 }
@@ -114,9 +119,44 @@ public class PathfindingManager : MonoBehaviour {
         //call the pathfinding method if the user specified a new goal
         if (this.AStarPathFinding.InProgress)
 	    {
-	        var finished = this.AStarPathFinding.Search(out this.currentSolution);
+	        if (this.AStarPathFinding.Search(out this.currentSolution) != this.finished)
+            {
+                this.finished = !this.finished;
+                if (this.finished) ProcessPath();
+            }
 	    }
 	}
+
+    private void ProcessPath() 
+    {
+        List<Vector3> pathPositions = this.currentSolution.PathPositions;
+
+        if (pathPositions.Count < 3) return;
+        
+        for (int i = 0; i < pathPositions.Count - 2; i++)
+        {
+            Vector3 from = pathPositions[i];
+            Vector3 to = pathPositions[i+2];
+            Vector3 dir = to-from;
+            Vector3 right = Quaternion.AngleAxis(90, Vector3.up) * dir;
+            Vector3 left = Quaternion.AngleAxis(-90, Vector3.up) * dir;
+            right.Normalize();
+            left.Normalize();
+
+            Ray r1 = new Ray(from + right * this.characterRadius, dir.normalized);
+            RaycastHit hit1;
+            Physics.Raycast(r1, out hit1, dir.magnitude, obstacleMask);
+            Ray r2 = new Ray(from + left * this.characterRadius, dir.normalized);
+            RaycastHit hit2;
+            Physics.Raycast(r2, out hit2, dir.magnitude, obstacleMask);
+
+            if (hit1.collider == null && hit2.collider == null)
+            {
+                pathPositions.RemoveAt(i+1);
+                i--;
+            }
+        }
+    }
 
     public void OnGUI()
     {

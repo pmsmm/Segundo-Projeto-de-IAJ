@@ -28,6 +28,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             List<int> goalIndices = new List<int>();
 
             this.searchBounds = this.GoalBoundingTable.table[this.Quantize(startPosition).NodeIndex];
+
             for (int i = 0; i < this.searchBounds.connectionBounds.Length; i++)
             {
                 if (IsInBounds(goalPosition, this.searchBounds.connectionBounds[i])) goalIndices.Add(i);

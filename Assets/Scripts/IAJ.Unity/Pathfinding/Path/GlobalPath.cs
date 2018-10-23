@@ -14,15 +14,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.Path
         public float Length { get; set; }
         public List<LocalPath> LocalPaths { get; protected set; } 
 
-
         public GlobalPath()
         {
             this.PathNodes = new List<NavigationGraphNode>();
             this.PathPositions = new List<Vector3>();
             this.LocalPaths = new List<LocalPath>();
         }
-
-        
 
         public override float GetParam(Vector3 position, float previousParam)
         {

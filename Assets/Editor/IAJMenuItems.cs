@@ -25,7 +25,6 @@ public class IAJMenuItems
         goalBoundingTable.table = new NodeGoalBounds[nodes.Count];
 
         NodeGoalBounds auxGoalBounds;
-
         //calculate goal bounds for each edge
         for (int i=0; i < nodes.Count; i++)
         {
