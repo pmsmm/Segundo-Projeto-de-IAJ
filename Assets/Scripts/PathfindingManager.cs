@@ -145,7 +145,7 @@ public class PathfindingManager : MonoBehaviour {
 
             Ray r1 = new Ray(from + right * this.characterRadius, dir.normalized);
             RaycastHit hit1;
-            Physics.Raycast(r1, out hit1, dir.magnitude, obstacleMask);
+            Physics.Raycast(r1, out hit1, dir.magnitude, obstacleMask); //nao entendi o que e' esta mask, e para que serve
             Ray r2 = new Ray(from + left * this.characterRadius, dir.normalized);
             RaycastHit hit2;
             Physics.Raycast(r2, out hit2, dir.magnitude, obstacleMask);
@@ -154,7 +154,7 @@ public class PathfindingManager : MonoBehaviour {
             {
                 pathPositions.RemoveAt(i+1);
                 i--;
-            }
+            } //else?
         }
     }
 

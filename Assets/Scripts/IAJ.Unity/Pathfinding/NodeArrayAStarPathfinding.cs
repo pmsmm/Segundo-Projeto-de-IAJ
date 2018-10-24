@@ -43,6 +43,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
             }
 
             //TODO: Review
+            //nao entendi esta primeira linha
             childNodeRecord.gValue = childNodeRecord.gValue != 0f ? childNodeRecord.gValue : bestNode.gValue + (childNode.LocalPosition - bestNode.node.LocalPosition).magnitude;
             childNodeRecord.hValue = childNodeRecord.hValue != 0f ? childNodeRecord.hValue : this.Heuristic.H(childNode, this.GoalNode);
             childNodeRecord.fValue = childNodeRecord.fValue != 0f ? childNodeRecord.fValue : F(childNodeRecord);
@@ -57,7 +58,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                     if (childNodeRecord.fValue > bestNode.fValue) this.Open.Replace(bestNode, childNodeRecord);
                     break;
                 case NodeStatus.Closed:
-                    if (childNodeRecord.fValue > bestNode.fValue)
+                    if (childNodeRecord.fValue > bestNode.fValue) //nao se muda o bestNode.fvalue neste caso?
                     {
                         childNodeRecord.status = NodeStatus.Open;
                         this.Open.AddToOpen(childNodeRecord);
