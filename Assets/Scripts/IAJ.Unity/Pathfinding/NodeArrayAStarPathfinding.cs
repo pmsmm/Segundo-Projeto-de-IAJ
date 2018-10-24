@@ -20,10 +20,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
         protected override void ProcessChildNode(NodeRecord bestNode, NavigationGraphEdge connectionEdge, int edgeIndex)
         {
-            //float f;
-            //float g;
-            //float h;
-
             var childNode = connectionEdge.ToNode;
             var childNodeRecord = this.NodeRecordArray.GetNodeRecord(childNode);
 
@@ -42,29 +38,40 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 this.NodeRecordArray.AddSpecialCaseNode(childNodeRecord);
             }
 
-            //TODO: Review
-            //nao entendi esta primeira linha
-            childNodeRecord.gValue = childNodeRecord.gValue != 0f ? childNodeRecord.gValue : bestNode.gValue + (childNode.LocalPosition - bestNode.node.LocalPosition).magnitude;
-            childNodeRecord.hValue = childNodeRecord.hValue != 0f ? childNodeRecord.hValue : this.Heuristic.H(childNode, this.GoalNode);
-            childNodeRecord.fValue = childNodeRecord.fValue != 0f ? childNodeRecord.fValue : F(childNodeRecord);
+            float g = bestNode.gValue + (childNode.LocalPosition - bestNode.node.LocalPosition).magnitude;
+            float h = this.Heuristic.H(childNode, this.GoalNode);
+            float f = F(g, h);
 
             switch (childNodeRecord.status)
             {
                 case NodeStatus.Unvisited:
                     this.Open.AddToOpen(childNodeRecord);
                     childNodeRecord.status = NodeStatus.Open;
+                    UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
                     break;
                 case NodeStatus.Open:
-                    if (childNodeRecord.fValue > bestNode.fValue) this.Open.Replace(bestNode, childNodeRecord);
+                    if (childNodeRecord.fValue > f)
+                    {
+                        UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
+                    }
                     break;
                 case NodeStatus.Closed:
-                    if (childNodeRecord.fValue > bestNode.fValue) //nao se muda o bestNode.fvalue neste caso?
+                    if (childNodeRecord.fValue > f)
                     {
                         childNodeRecord.status = NodeStatus.Open;
+                        UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
                         this.Open.AddToOpen(childNodeRecord);
                     }
                     break;
             }
+        }
+
+        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g, float h, float f)
+        {
+            node.parent = parent;
+            node.gValue = g;
+            node.hValue = h;
+            node.fValue = f;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)

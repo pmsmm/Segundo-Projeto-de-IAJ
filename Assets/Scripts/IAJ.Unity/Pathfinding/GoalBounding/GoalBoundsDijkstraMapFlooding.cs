@@ -31,13 +31,13 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             //do not change this
             var nodes = this.GetNodesHack(graph);
             this.NodeRecordArray = new NodeRecordArray(nodes);
+            this.Open = this.NodeRecordArray;
+            this.Closed = this.NodeRecordArray;
         }
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
-            this.Open = this.NodeRecordArray;
-            this.Closed = this.NodeRecordArray;
-
+            this.NodeGoalBounds = nodeGoalBounds;
             IDs = new List<List<int>>(startNode.OutEdgeCount);
 
             NodeRecord[] initialOpen = this.Open.All().ToArray();
@@ -58,6 +58,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
                 {
                     ProcessChildNode(Node, Node.node.EdgeOut(i), i);
                 }
+            }
+
+            List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
+            for (int j = 0; j < closed.Count; j++)
+            {
+                closed[j].status = NodeStatus.Unvisited;
             }
         }
 

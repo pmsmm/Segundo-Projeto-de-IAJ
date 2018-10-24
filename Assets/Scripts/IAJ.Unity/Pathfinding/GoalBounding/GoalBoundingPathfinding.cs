@@ -13,8 +13,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         public GoalBoundingTable GoalBoundingTable { get; protected set;}
         public int DiscardedEdges { get; protected set; }
 		public int TotalEdges { get; protected set; }
-        private int GoalIndex;
-        private NodeGoalBounds searchBounds;
 
         public GoalBoundingPathfinding(NavMeshPathGraph graph, IHeuristic heuristic, GoalBoundingTable goalBoundsTable) : base(graph, heuristic)
         {
@@ -25,50 +23,45 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             this.DiscardedEdges = 0;
 			this.TotalEdges = 0;
-            List<int> goalIndices = new List<int>();
-
-            this.searchBounds = this.GoalBoundingTable.table[this.Quantize(startPosition).NodeIndex];
-
-            for (int i = 0; i < this.searchBounds.connectionBounds.Length; i++)
-            {
-                if (IsInBounds(goalPosition, this.searchBounds.connectionBounds[i])) goalIndices.Add(i);
-            }
-
-            if (goalIndices.Count == 1) this.GoalIndex = goalIndices[0];
-            else
-            {
-                float bestArea = -1f;
-                for (int j = 0; j < goalIndices.Count; j++)
-                {
-                    IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds boundingBox = this.searchBounds.connectionBounds[goalIndices[j]];
-                    float boxArea = (boundingBox.maxx - boundingBox.minx) * (boundingBox.maxz - boundingBox.minz);
-                    if (bestArea < 0f || boxArea < bestArea)
-                    {
-                        bestArea = boxArea;
-                        this.GoalIndex = goalIndices[j];
-                    }
-                }
-            }
             base.InitializePathfindingSearch(startPosition, goalPosition);
         }
 
         protected override void ProcessChildNode(NodeRecord parentNode, NavigationGraphEdge connectionEdge, int edgeIndex)
         {
-            if (this.searchBounds != null)
+            NodeGoalBounds goalBounds = this.GoalBoundingTable.table[parentNode.node.NodeIndex];
+            if (goalBounds != null)
             {
-                if (!IsOverlappingGoalBox(parentNode.node.Position)) return;
-            }
-            else
-            {
-                this.searchBounds = this.GoalBoundingTable.table[connectionEdge.ToNode.NodeIndex];
+                if (!IsInBounds(connectionEdge.ToNode.Position, goalBounds.connectionBounds[GetGoalBoundingBoxIndex(goalBounds.connectionBounds)])) return;
             }
 
             base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
         }
 
-        protected bool IsOverlappingGoalBox(Vector3 position)
+        protected int GetGoalBoundingBoxIndex(IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[] bounds)
         {
-            return IsInBounds(position, this.searchBounds.connectionBounds[this.GoalIndex]);
+            List<int> goalIndices = new List<int>();
+
+            for (int i = 0; i < bounds.Length; i++)
+            {
+                if (IsInBounds(this.GoalPosition, bounds[i])) goalIndices.Add(i);
+            }
+
+            if (goalIndices.Count == 1) return goalIndices[0];
+            else
+            {
+                float bestArea = -1f;
+                for (int j = 0; j < goalIndices.Count; j++)
+                {
+                    IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds boundingBox = bounds[goalIndices[j]];
+                    float boxArea = (boundingBox.maxx - boundingBox.minx) * (boundingBox.maxz - boundingBox.minz);
+                    if (bestArea < 0f || boxArea < bestArea)
+                    {
+                        bestArea = boxArea;
+                        return goalIndices[j];
+                    }
+                }
+            }
+            return -1;
         }
 
         protected bool IsInBounds(Vector3 position, IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)
