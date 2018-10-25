@@ -40,7 +40,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             this.NodeGoalBounds = nodeGoalBounds;
             IDs = new List<List<int>>(startNode.OutEdgeCount);
 
-            NodeRecord[] initialOpen = this.Open.All().ToArray();
             for (int j = 0; j < startNode.OutEdgeCount; j++) this.NodeRecordArray.GetNodeRecord(startNode.EdgeOut(j).ToNode).id = j;
 
             while (this.Open.CountOpen() > 0)
