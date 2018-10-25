@@ -74,23 +74,15 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             switch (node.status)
             {
                 case NodeStatus.Unvisited:
+                    UpdateNodeRecord(node, parent, g);
                     this.Open.AddToOpen(node);
                     node.status = NodeStatus.Open;
-                    UpdateNodeRecord(node, parent, g);
                     break;
                 case NodeStatus.Open:
                     if (node.gValue > g)
                     {
+                        UpdateNodeRecord(node, parent, g);
                         this.Open.Replace(parent, node);
-                        UpdateNodeRecord(node, parent, g);
-                    }
-                    break;
-                case NodeStatus.Closed:
-                    if (node.gValue > g)
-                    {
-                        node.status = NodeStatus.Open;
-                        this.Open.AddToOpen(node);
-                        UpdateNodeRecord(node, parent, g);
                     }
                     break;
             }
@@ -108,9 +100,9 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)
         {
+            node.gValue = g;
             node.parent = parent;
             if (parent.id != -1) node.id = parent.id;
-            node.gValue = g;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)
