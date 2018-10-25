@@ -20,7 +20,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         public NavigationGraphNode StartNode { get; protected set; }
         public NodeGoalBounds NodeGoalBounds { get; protected set; }
         protected NodeRecordArray NodeRecordArray { get; set; }
-        protected HashSet<int> initializedBoxes;
 
         public IOpenSet Open { get; protected set; }
         public IClosedSet Closed { get; protected set; }
@@ -37,20 +36,19 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
+            Debug.Log("Initiated search");
             this.NodeGoalBounds = nodeGoalBounds;
-            initializedBoxes = new HashSet<int>();
+
+            NodeRecord startNodeRecord = this.NodeRecordArray.GetNodeRecord(startNode);
+            this.Open.AddToOpen(startNodeRecord);
 
             for (int j = 0; j < startNode.OutEdgeCount; j++) this.NodeRecordArray.GetNodeRecord(startNode.EdgeOut(j).ToNode).id = j;
 
             while (this.Open.CountOpen() > 0)
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
-
-                if (Node.id != -1) continue;
-
                 this.Closed.AddToClosed(Node);
-                Node.id = Node.parent.id;
-                UpdateBoundingBox(Node.id, Node.node.Position);
+                if (Node.id != -1) UpdateBoundingBox(Node.id, Node.node.Position);
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
@@ -63,6 +61,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 closed[j].status = NodeStatus.Unvisited;
             }
+            Debug.Log("Concluded search");
         }
 
 
@@ -70,20 +69,28 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             NodeRecord node = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
 
+            float g = parent.gValue + (node.node.LocalPosition - parent.node.LocalPosition).magnitude;
+
             switch (node.status)
             {
                 case NodeStatus.Unvisited:
                     this.Open.AddToOpen(node);
                     node.status = NodeStatus.Open;
+                    UpdateNodeRecord(node, parent, g);
                     break;
                 case NodeStatus.Open:
-                    if (node.gValue > parent.gValue) this.Open.Replace(parent, node);
+                    if (node.gValue > g)
+                    {
+                        this.Open.Replace(parent, node);
+                        UpdateNodeRecord(node, parent, g);
+                    }
                     break;
                 case NodeStatus.Closed:
-                    if (node.gValue > parent.gValue)
+                    if (node.gValue > g)
                     {
                         node.status = NodeStatus.Open;
                         this.Open.AddToOpen(node);
+                        UpdateNodeRecord(node, parent, g);
                     }
                     break;
             }
@@ -93,22 +100,17 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds = this.NodeGoalBounds.connectionBounds[index];
 
-            if (initializedBoxes.Contains(index))
-            {
-                bounds.maxx = (position.x > bounds.maxx) ? position.x : bounds.maxx + 1f;
-                bounds.minx = (position.x < bounds.minx) ? position.x : bounds.minx - 1f;
-                bounds.maxz = (position.z > bounds.maxz) ? position.z : bounds.maxz + 1f;
-                bounds.minz = (position.z < bounds.minz) ? position.z : bounds.minz - 1f;
-            }
-            else
-            {
-                initializedBoxes.Add(index);
+            bounds.maxx = (position.x > bounds.maxx) ? position.x : bounds.maxx + 1f;
+            bounds.minx = (position.x < bounds.minx) ? position.x : bounds.minx - 1f;
+            bounds.maxz = (position.z > bounds.maxz) ? position.z : bounds.maxz + 1f;
+            bounds.minz = (position.z < bounds.minz) ? position.z : bounds.minz - 1f;
+        }
 
-                bounds.maxx = position.x + 1f;
-                bounds.minx = position.x - 1f;
-                bounds.maxz = position.z + 1f;
-                bounds.minz = position.z - 1f;
-            }
+        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)
+        {
+            node.parent = parent;
+            if (parent.id != -1) node.id = parent.id;
+            node.gValue = g;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)

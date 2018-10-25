@@ -72,7 +72,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures
         public void AddToOpen(NodeRecord nodeRecord)
         {
             this.Open.AddToOpen(nodeRecord);
-            this.Open.AddToOpen(nodeRecord);
+            nodeRecord.status = NodeStatus.Open;
         }
 
         public void AddToClosed(NodeRecord nodeRecord)

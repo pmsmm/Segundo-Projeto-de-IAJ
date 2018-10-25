@@ -69,6 +69,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
         protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g, float h, float f)
         {
             node.parent = parent;
+            node.id = parent.id;
             node.gValue = g;
             node.hValue = h;
             node.fValue = f;
