@@ -36,7 +36,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
-            Debug.Log("Initiated search");
             this.NodeGoalBounds = nodeGoalBounds;
 
             NodeRecord startNodeRecord = this.NodeRecordArray.GetNodeRecord(startNode);
@@ -61,7 +60,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 closed[j].status = NodeStatus.Unvisited;
             }
-            Debug.Log("Concluded search");
         }
 
 
@@ -92,10 +90,10 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds = this.NodeGoalBounds.connectionBounds[index];
 
-            bounds.maxx = (position.x > bounds.maxx) ? position.x : bounds.maxx + 1f;
-            bounds.minx = (position.x < bounds.minx) ? position.x : bounds.minx - 1f;
-            bounds.maxz = (position.z > bounds.maxz) ? position.z : bounds.maxz + 1f;
-            bounds.minz = (position.z < bounds.minz) ? position.z : bounds.minz - 1f;
+            bounds.maxx = (position.x > bounds.maxx) ? position.x + 1f : bounds.maxx;
+            bounds.minx = (position.x < bounds.minx) ? position.x - 1f : bounds.minx;
+            bounds.maxz = (position.z > bounds.maxz) ? position.z + 1f : bounds.maxz;
+            bounds.minz = (position.z < bounds.minz) ? position.z - 1f : bounds.minz;
         }
 
         protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)
