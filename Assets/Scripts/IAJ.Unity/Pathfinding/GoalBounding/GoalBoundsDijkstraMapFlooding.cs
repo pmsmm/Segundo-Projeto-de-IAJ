@@ -47,13 +47,15 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
                 this.Closed.AddToClosed(Node);
-                if (Node.id != -1) UpdateBoundingBox(Node.id, Node.node.Position);
+                if (Node.id != -1) UpdateBoundingBox(Node.id, Node.node.Position, ref this.NodeGoalBounds.connectionBounds[Node.id]);
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
                     ProcessChildNode(Node, Node.node.EdgeOut(i), i);
                 }
             }
+
+            //DrawBoxes();
 
             List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
             for (int j = 0; j < closed.Count; j++)
@@ -67,33 +69,41 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             NodeRecord node = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
 
-            float g = parent.gValue + (node.node.LocalPosition - parent.node.LocalPosition).magnitude;
+            float g = parent.gValue + (node.node.Position - parent.node.Position).magnitude;
 
             switch (node.status)
             {
                 case NodeStatus.Unvisited:
                     UpdateNodeRecord(node, parent, g);
                     this.Open.AddToOpen(node);
-                    node.status = NodeStatus.Open;
                     break;
                 case NodeStatus.Open:
                     if (node.gValue > g)
                     {
                         UpdateNodeRecord(node, parent, g);
-                        this.Open.Replace(parent, node);
                     }
                     break;
             }
         }
 
-        protected void UpdateBoundingBox(int index, Vector3 position)
+        protected void UpdateBoundingBox(int index, Vector3 position, ref Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)
         {
-            Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds = this.NodeGoalBounds.connectionBounds[index];
-
             bounds.maxx = (position.x > bounds.maxx) ? position.x + 1f : bounds.maxx;
             bounds.minx = (position.x < bounds.minx) ? position.x - 1f : bounds.minx;
             bounds.maxz = (position.z > bounds.maxz) ? position.z + 1f : bounds.maxz;
             bounds.minz = (position.z < bounds.minz) ? position.z - 1f : bounds.minz;
+        }
+
+        private void DrawBoxes()
+        {
+            IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[] boxBounds = this.NodeGoalBounds.connectionBounds;
+            foreach (IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bound in boxBounds)
+            {
+                Debug.DrawLine(new Vector3(bound.maxx, 0, bound.maxz), new Vector3(bound.minx, 0, bound.maxz), Color.red, 0.5f);
+                Debug.DrawLine(new Vector3(bound.maxx, 0, bound.maxz), new Vector3(bound.maxx, 0, bound.minz), Color.red, 0.5f);
+                Debug.DrawLine(new Vector3(bound.minx, 0, bound.minz), new Vector3(bound.minx, 0, bound.maxz), Color.red, 0.5f);
+                Debug.DrawLine(new Vector3(bound.minx, 0, bound.minz), new Vector3(bound.maxx, 0, bound.minz), Color.red, 0.5f);
+            }
         }
 
         protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)

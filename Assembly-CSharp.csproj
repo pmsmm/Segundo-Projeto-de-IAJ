@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BoundingBoxHelper.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\AStartPathfinding.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\DataStructures\DictionaryList.cs" />
     <Compile Include="Assets\Scripts\IAJ.Unity\Pathfinding\DataStructures\GoalBounding\Bounds.cs" />

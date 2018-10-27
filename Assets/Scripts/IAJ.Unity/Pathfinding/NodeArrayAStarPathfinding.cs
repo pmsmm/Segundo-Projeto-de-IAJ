@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures;
 using Assets.Scripts.IAJ.Unity.Pathfinding.Heuristics;
 using RAIN.Navigation.Graph;
@@ -73,6 +74,27 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
             node.gValue = g;
             node.hValue = h;
             node.fValue = f;
+        }
+
+        protected override void Finished()
+        {
+            List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
+            for (int j = 0; j < closed.Count; j++)
+            {
+                ResetNodeRecord(closed[j]);
+            }
+            while (this.Open.CountOpen() > 0)
+            {
+                this.Open.GetBestAndRemove();
+            }
+        }
+
+        protected void ResetNodeRecord(NodeRecord node)
+        {
+            node.status = NodeStatus.Unvisited;
+            node.gValue = 0f;
+            node.id = -1;
+            node.parent = null;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)

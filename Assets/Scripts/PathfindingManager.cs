@@ -127,6 +127,14 @@ public class PathfindingManager : MonoBehaviour {
 	    }
 	}
 
+
+    protected void ResetNodeRecord(NodeRecord node)
+    {
+        node.status = NodeStatus.Unvisited;
+        node.gValue = 0f;
+        node.id = -1;
+        node.parent = null;
+    }
     private void ProcessPath() 
     {
         List<Vector3> pathPositions = this.currentSolution.PathPositions;

@@ -122,6 +122,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 {
                     solution = null;
                     this.InProgress = false;
+                    Finished();
                     return true;
                 }
                 else if (openCount > MaxOpenNodes) MaxOpenNodes = openCount;
@@ -131,6 +132,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 {
                     this.InProgress = false;
                     solution = this.CalculateSolution(Node, false);
+                    Finished();
                     return true;
                 }
 
@@ -150,6 +152,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                     return false;
                 }
             }
+
+        }
+
+        protected virtual void Finished()
+        {
+
         }
 
         protected NavigationGraphNode Quantize(Vector3 position)
@@ -229,7 +237,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
         public static float F(float g, float h)
         {
-            return g + 1.05f*h;
+            return g + 1.1f*h;
         }
 
     }
