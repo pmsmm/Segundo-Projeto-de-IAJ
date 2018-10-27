@@ -58,7 +58,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
             for (int j = 0; j < closed.Count; j++)
             {
-                closed[j].status = NodeStatus.Unvisited;
+                ResetNodeRecord(closed[j]);
             }
         }
 
@@ -101,6 +101,14 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             node.gValue = g;
             node.parent = parent;
             if (parent.id != -1) node.id = parent.id;
+        }
+
+        protected void ResetNodeRecord(NodeRecord node)
+        {
+            node.status = NodeStatus.Unvisited;
+            node.gValue = 0f;
+            node.id = -1;
+            node.parent = null;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)
