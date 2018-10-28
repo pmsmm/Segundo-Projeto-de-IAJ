@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.IAJ.Unity.Pathfinding;
 using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures;
+using Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding;
 using Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding;
 using Assets.Scripts.IAJ.Unity.Pathfinding.Heuristics;
 using Assets.Scripts.IAJ.Unity.Pathfinding.Path;
@@ -25,8 +26,8 @@ public class PathfindingManager : MonoBehaviour {
     public float characterRadius = 1f;
     public LayerMask obstacleMask;
 
-	//private fields for internal use only
-	private Vector3 startPosition;
+    //private fields for internal use only
+    private Vector3 startPosition;
 	private Vector3 endPosition;
 	private NavMeshPathGraph navMesh;
     private int currentClickNumber;
@@ -92,6 +93,7 @@ public class PathfindingManager : MonoBehaviour {
                     this.finished = false;
                     //initialize the search algorithm
                     this.AStarPathFinding.InitializePathfindingSearch(this.startPosition, this.endPosition);
+                    
                 }
 			}
 		}
@@ -137,6 +139,8 @@ public class PathfindingManager : MonoBehaviour {
     }
     private void ProcessPath() 
     {
+        if (this.currentSolution == null) return;
+
         List<Vector3> pathPositions = this.currentSolution.PathPositions;
 
         if (pathPositions.Count < 3) return;
@@ -144,24 +148,24 @@ public class PathfindingManager : MonoBehaviour {
         for (int i = 0; i < pathPositions.Count - 2; i++)
         {
             Vector3 from = pathPositions[i];
-            Vector3 to = pathPositions[i+2];
-            Vector3 dir = to-from;
-            Vector3 right = Quaternion.AngleAxis(90, Vector3.up) * dir;
-            Vector3 left = Quaternion.AngleAxis(-90, Vector3.up) * dir;
-            right.Normalize();
-            left.Normalize();
+            Vector3 dir = pathPositions[i + 2] - from;
+            Vector3 right = (Quaternion.AngleAxis(90, Vector3.up) * dir).normalized;
+            Vector3 left = (Quaternion.AngleAxis(-90, Vector3.up) * dir).normalized;
 
             Ray r1 = new Ray(from + right * this.characterRadius, dir.normalized);
             RaycastHit hit1;
-            Physics.Raycast(r1, out hit1, dir.magnitude, obstacleMask); //nao entendi o que e' esta mask, e para que serve
-            Ray r2 = new Ray(from + left * this.characterRadius, dir.normalized);
-            RaycastHit hit2;
-            Physics.Raycast(r2, out hit2, dir.magnitude, obstacleMask);
-
-            if (hit1.collider == null && hit2.collider == null)
+            Physics.Raycast(r1, out hit1, dir.magnitude, obstacleMask);
+            if (hit1.collider == null)
             {
-                pathPositions.RemoveAt(i+1);
-                i--;
+                Ray r2 = new Ray(from + left * this.characterRadius, dir.normalized);
+                RaycastHit hit2;
+                Physics.Raycast(r2, out hit2, dir.magnitude, obstacleMask);
+
+                if (hit2.collider == null)
+                {
+                    pathPositions.RemoveAt(i + 1);
+                    i--;
+                }
             }
         }
     }

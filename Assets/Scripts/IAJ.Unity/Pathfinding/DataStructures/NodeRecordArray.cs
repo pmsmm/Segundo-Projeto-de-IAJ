@@ -48,6 +48,15 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures
             }
         }
 
+        public void ResetAllNodes()
+        {
+            for (int i = 0; i < NodeRecords.Length; i++)
+            {
+                NodeRecords[i].id = -1;
+                NodeRecords[i].status = NodeStatus.Unvisited;
+            }
+        }
+
         public void AddSpecialCaseNode(NodeRecord node)
         {
             this.SpecialCaseNodes.Add(node);

@@ -28,10 +28,11 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         protected override void ProcessChildNode(NodeRecord parentNode, NavigationGraphEdge connectionEdge, int edgeIndex)
         {
+            int ind = parentNode.node.NodeIndex;
             NodeGoalBounds goalBounds = this.GoalBoundingTable.table[parentNode.node.NodeIndex];
             if (goalBounds != null)
             {
-                if (!IsInBounds(connectionEdge.ToNode.Position, goalBounds.connectionBounds[GetGoalBoundingBoxIndex(goalBounds.connectionBounds)])) return;
+                if (!goalBounds.connectionBounds[GetGoalBoundingBoxIndex(goalBounds.connectionBounds)].PositionInsideBounds(connectionEdge.ToNode.Position)) return;
             }
 
             base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);

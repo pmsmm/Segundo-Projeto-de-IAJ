@@ -20,9 +20,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures
         public float fValue;
         public NodeStatus status;
 
-        //used only for the GoalBounds
-        public int StartNodeOutConnectionIndex;
-
         public int CompareTo(NodeRecord other)
         {
             return this.fValue.CompareTo(other.fValue);

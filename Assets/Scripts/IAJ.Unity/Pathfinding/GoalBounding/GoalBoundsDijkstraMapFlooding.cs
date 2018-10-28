@@ -32,14 +32,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             this.NodeRecordArray = new NodeRecordArray(nodes);
             this.Open = this.NodeRecordArray;
             this.Closed = this.NodeRecordArray;
+            this.Open.Initialize();
         }
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
-            this.NodeGoalBounds = nodeGoalBounds;
-
-            NodeRecord startNodeRecord = this.NodeRecordArray.GetNodeRecord(startNode);
-            this.Open.AddToOpen(startNodeRecord);
+            this.Open.AddToOpen(this.NodeRecordArray.GetNodeRecord(startNode));
 
             for (int j = 0; j < startNode.OutEdgeCount; j++) this.NodeRecordArray.GetNodeRecord(startNode.EdgeOut(j).ToNode).id = j;
 
@@ -47,7 +45,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
                 this.Closed.AddToClosed(Node);
-                if (Node.id != -1) UpdateBoundingBox(Node.id, Node.node.Position, ref this.NodeGoalBounds.connectionBounds[Node.id]);
+                if (Node.id != -1) nodeGoalBounds.connectionBounds[Node.id].UpdateBounds(Node.node.Position);
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
@@ -55,70 +53,34 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
                 }
             }
 
-            //DrawBoxes();
-
-            List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
-            for (int j = 0; j < closed.Count; j++)
-            {
-                ResetNodeRecord(closed[j]);
-            }
+            this.NodeRecordArray.ResetAllNodes();
         }
-
 
         protected void ProcessChildNode(NodeRecord parent, NavigationGraphEdge connectionEdge, int connectionIndex)
         {
             NodeRecord node = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
+            if (node.status == NodeStatus.Closed) return;
 
-            float g = parent.gValue + (node.node.Position - parent.node.Position).magnitude;
+            float g = parent.gValue + connectionEdge.Cost;
 
-            switch (node.status)
+            if (node.status == NodeStatus.Unvisited)
             {
-                case NodeStatus.Unvisited:
-                    UpdateNodeRecord(node, parent, g);
-                    this.Open.AddToOpen(node);
-                    break;
-                case NodeStatus.Open:
-                    if (node.gValue > g)
-                    {
-                        UpdateNodeRecord(node, parent, g);
-                    }
-                    break;
+                UpdateNodeRecord(node, parent, g);
+                this.Open.AddToOpen(node);
             }
-        }
-
-        protected void UpdateBoundingBox(int index, Vector3 position, ref Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)
-        {
-            bounds.maxx = (position.x > bounds.maxx) ? position.x + 1f : bounds.maxx;
-            bounds.minx = (position.x < bounds.minx) ? position.x - 1f : bounds.minx;
-            bounds.maxz = (position.z > bounds.maxz) ? position.z + 1f : bounds.maxz;
-            bounds.minz = (position.z < bounds.minz) ? position.z - 1f : bounds.minz;
-        }
-
-        private void DrawBoxes()
-        {
-            IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[] boxBounds = this.NodeGoalBounds.connectionBounds;
-            foreach (IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bound in boxBounds)
+            else if (node.gValue > g)
             {
-                Debug.DrawLine(new Vector3(bound.maxx, 0, bound.maxz), new Vector3(bound.minx, 0, bound.maxz), Color.red, 0.5f);
-                Debug.DrawLine(new Vector3(bound.maxx, 0, bound.maxz), new Vector3(bound.maxx, 0, bound.minz), Color.red, 0.5f);
-                Debug.DrawLine(new Vector3(bound.minx, 0, bound.minz), new Vector3(bound.minx, 0, bound.maxz), Color.red, 0.5f);
-                Debug.DrawLine(new Vector3(bound.minx, 0, bound.minz), new Vector3(bound.maxx, 0, bound.minz), Color.red, 0.5f);
+                UpdateNodeRecord(node, parent, g);
+                this.Open.Replace(this.Open.SearchInOpen(node), node);
             }
         }
 
         protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)
         {
             node.gValue = g;
+            node.fValue = g;
             node.parent = parent;
             if (parent.id != -1) node.id = parent.id;
-        }
-
-        protected void ResetNodeRecord(NodeRecord node)
-        {
-            node.status = NodeStatus.Unvisited;
-            node.gValue = 0f;
-            node.id = -1;
-            node.parent = null;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)

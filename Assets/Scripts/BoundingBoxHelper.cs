@@ -29,6 +29,8 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding {
 
         private void DrawBoxes()
         {
+            if (table[boundingBoxIndex] == null) return;
+
             IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[] boxBounds = table[boundingBoxIndex].connectionBounds;
             foreach (IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bound in boxBounds)
             {

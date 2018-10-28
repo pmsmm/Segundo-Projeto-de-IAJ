@@ -93,21 +93,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
             else
             {
                 NodeRecord closedNode = this.Closed.SearchInClosed(childNode);
-                if (closedNode != null)
-                {
-                    if (!(childNode.fValue > closedNode.fValue))
-                    {
-                        if (childNode.fValue < closedNode.fValue || childNode.gValue < closedNode.gValue)
-                        {
-                            this.Closed.RemoveFromClosed(closedNode);
-                            this.Open.AddToOpen(childNode);
-                        }
-                    }
-                }
-                else
-                {
-                    this.Open.AddToOpen(childNode);
-                }
+                if (closedNode == null) this.Open.AddToOpen(childNode);
             }
         }
 
@@ -237,7 +223,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
         public static float F(float g, float h)
         {
-            return g + 1.1f*h;
+            return g + 1.05f*h;
         }
 
     }

@@ -39,31 +39,21 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 this.NodeRecordArray.AddSpecialCaseNode(childNodeRecord);
             }
 
-            float g = bestNode.gValue + (childNode.LocalPosition - bestNode.node.LocalPosition).magnitude;
+            if (childNodeRecord.status == NodeStatus.Closed) return;
+
+            float g = bestNode.gValue + connectionEdge.Cost;
             float h = this.Heuristic.H(childNode, this.GoalNode);
             float f = F(g, h);
 
-            switch (childNodeRecord.status)
+            if (childNodeRecord.status == NodeStatus.Unvisited)
             {
-                case NodeStatus.Unvisited:
-                    this.Open.AddToOpen(childNodeRecord);
-                    childNodeRecord.status = NodeStatus.Open;
-                    UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
-                    break;
-                case NodeStatus.Open:
-                    if (childNodeRecord.fValue > f)
-                    {
-                        UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
-                    }
-                    break;
-                case NodeStatus.Closed:
-                    if (childNodeRecord.fValue > f)
-                    {
-                        childNodeRecord.status = NodeStatus.Open;
-                        UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
-                        this.Open.AddToOpen(childNodeRecord);
-                    }
-                    break;
+                UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
+                this.Open.AddToOpen(childNodeRecord);
+            }
+            else if (childNodeRecord.fValue > f)
+            {
+                UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
+                this.Open.Replace(this.Open.SearchInOpen(childNodeRecord), childNodeRecord);
             }
         }
 
@@ -78,15 +68,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
         protected override void Finished()
         {
-            List<NodeRecord> closed = this.Closed.All().ToList<NodeRecord>();
-            for (int j = 0; j < closed.Count; j++)
-            {
-                ResetNodeRecord(closed[j]);
-            }
-            while (this.Open.CountOpen() > 0)
-            {
-                this.Open.GetBestAndRemove();
-            }
+            this.NodeRecordArray.ResetAllNodes();
         }
 
         protected void ResetNodeRecord(NodeRecord node)
