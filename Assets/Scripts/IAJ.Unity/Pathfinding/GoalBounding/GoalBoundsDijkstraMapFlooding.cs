@@ -46,7 +46,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
                 this.Closed.AddToClosed(Node);
-                if (Node.id != -1) nodeGoalBounds.connectionBounds[Node.id].UpdateBounds(Node.node.LocalPosition);
+                if (Node.id != -1 && nodeGoalBounds.connectionBounds.Length > Node.id) nodeGoalBounds.connectionBounds[Node.id].UpdateBounds(Node.node.LocalPosition);
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
