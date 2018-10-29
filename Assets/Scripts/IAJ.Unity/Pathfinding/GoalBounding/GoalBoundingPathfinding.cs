@@ -31,18 +31,9 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             NodeGoalBounds goalBounds = this.GoalBoundingTable.table[parentNode.node.NodeIndex];
             if (goalBounds != null && goalBounds.connectionBounds.Length > edgeIndex)
             {
-                if (!goalBounds.connectionBounds[edgeIndex].PositionInsideBounds(connectionEdge.ToNode.LocalPosition)) return;
+                if (!goalBounds.connectionBounds[edgeIndex].PositionInsideBounds(this.GoalPosition)) return;
             }
-            else
-            {
-                base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
-            }
-        }
-
-        protected bool IsInBounds(Vector3 position, IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)
-        {
-            return (position.x <= bounds.maxx && position.x >= bounds.minx &&
-                    position.z <= bounds.maxz && position.z >= bounds.minz);
+            base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
         }
     }
 }
