@@ -184,6 +184,7 @@ public class PathfindingManager : MonoBehaviour {
                 timePerNode = 0;
             }
             var text = "Nodes Visited: " + this.AStarPathFinding.TotalExploredNodes
+                       + "\nFill: " + (this.AStarPathFinding.TotalExploredNodes - this.currentSolution.PathNodes.Count)
                        + "\nMaximum Open Size: " + this.AStarPathFinding.MaxOpenNodes
                        + "\nProcessing time (ms): " + time.ToString("F")
                        + "\nTime per Node (ms):" + timePerNode.ToString("F4");
