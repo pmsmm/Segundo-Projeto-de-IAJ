@@ -86,7 +86,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
             {
                 if (!(childNode.fValue > openNode.fValue))
                 {
-                    if (childNode.fValue < openNode.fValue || childNode.gValue < openNode.gValue)
+                    if (childNode.fValue < openNode.fValue || childNode.hValue < openNode.hValue)
                         this.Open.Replace(openNode, childNode);
                 }
             }

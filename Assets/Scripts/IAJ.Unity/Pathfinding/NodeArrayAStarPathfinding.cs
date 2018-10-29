@@ -41,26 +41,31 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
             if (childNodeRecord.status == NodeStatus.Closed) return;
 
-            float g = bestNode.gValue + connectionEdge.Cost;
+            float g = bestNode.gValue + (childNodeRecord.node.LocalPosition - bestNode.node.LocalPosition).magnitude;
             float h = this.Heuristic.H(childNode, this.GoalNode);
             float f = F(g, h);
 
             if (childNodeRecord.status == NodeStatus.Unvisited)
             {
-                UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
+                UpdateNodeRecord(childNodeRecord, bestNode, connectionEdge.ToNode, g, h, f);
                 this.Open.AddToOpen(childNodeRecord);
             }
-            else if (childNodeRecord.fValue > f)
+            else if (!(childNodeRecord.fValue < f))
             {
-                UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
-                this.Open.Replace(this.Open.SearchInOpen(childNodeRecord), childNodeRecord);
+                if (childNodeRecord.fValue < f || childNodeRecord.hValue < h)
+                {
+                    NodeRecord open = this.Open.SearchInOpen(childNodeRecord);
+                    UpdateNodeRecord(childNodeRecord, bestNode, connectionEdge.ToNode, g, h, f);
+                    this.Open.Replace(open, childNodeRecord);
+                }
             }
         }
 
-        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g, float h, float f)
+        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, NavigationGraphNode edgeNode, float g, float h, float f)
         {
             node.parent = parent;
             node.id = parent.id;
+            node.node = edgeNode;
             node.gValue = g;
             node.hValue = h;
             node.fValue = f;
@@ -68,7 +73,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
         protected override void Finished()
         {
-            this.NodeRecordArray.ResetAllNodes();
+            this.Open.Initialize();
         }
 
         protected void ResetNodeRecord(NodeRecord node)

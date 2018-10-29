@@ -37,7 +37,10 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         public void Search(NavigationGraphNode startNode, NodeGoalBounds nodeGoalBounds)
         {
-            this.Open.AddToOpen(this.NodeRecordArray.GetNodeRecord(startNode));
+            NodeRecord startNodeRecord = this.NodeRecordArray.GetNodeRecord(startNode);
+            startNodeRecord.node = startNode;
+            startNodeRecord.gValue = 0f;
+            this.Open.AddToOpen(startNodeRecord);
 
             for (int j = 0; j < startNode.OutEdgeCount; j++) this.NodeRecordArray.GetNodeRecord(startNode.EdgeOut(j).ToNode).id = j;
 
@@ -45,40 +48,42 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
                 this.Closed.AddToClosed(Node);
-                if (Node.id != -1) nodeGoalBounds.connectionBounds[Node.id].UpdateBounds(Node.node.Position);
+                if (Node.id != -1) nodeGoalBounds.connectionBounds[Node.id].UpdateBounds(Node.node.LocalPosition);
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
-                    ProcessChildNode(Node, Node.node.EdgeOut(i), i);
+                    ProcessChildNode(Node, Node.node.EdgeOut(i));
                 }
             }
 
-            this.NodeRecordArray.ResetAllNodes();
+            this.Open.Initialize();
         }
 
-        protected void ProcessChildNode(NodeRecord parent, NavigationGraphEdge connectionEdge, int connectionIndex)
+        protected void ProcessChildNode(NodeRecord parent, NavigationGraphEdge connectionEdge)
         {
             NodeRecord node = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
             if (node.status == NodeStatus.Closed) return;
 
-            float g = parent.gValue + connectionEdge.Cost;
+            float g = parent.gValue + (node.node.LocalPosition - parent.node.LocalPosition).magnitude;
 
             if (node.status == NodeStatus.Unvisited)
             {
-                UpdateNodeRecord(node, parent, g);
+                UpdateNodeRecord(node, connectionEdge.ToNode, parent, g);
                 this.Open.AddToOpen(node);
             }
             else if (node.gValue > g)
             {
-                UpdateNodeRecord(node, parent, g);
-                this.Open.Replace(this.Open.SearchInOpen(node), node);
+                NodeRecord open = this.Open.SearchInOpen(node);
+                UpdateNodeRecord(node, connectionEdge.ToNode, parent, g);
+                this.Open.Replace(open, node);
             }
         }
 
-        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g)
+        protected void UpdateNodeRecord(NodeRecord node, NavigationGraphNode graphNode, NodeRecord parent, float g)
         {
             node.gValue = g;
             node.fValue = g;
+            node.node = graphNode;
             node.parent = parent;
             if (parent.id != -1) node.id = parent.id;
         }

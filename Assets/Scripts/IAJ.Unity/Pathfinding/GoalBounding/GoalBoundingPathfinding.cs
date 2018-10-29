@@ -30,39 +30,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
         {
             int ind = parentNode.node.NodeIndex;
             NodeGoalBounds goalBounds = this.GoalBoundingTable.table[parentNode.node.NodeIndex];
-            if (goalBounds != null)
+            if (goalBounds != null && goalBounds.connectionBounds.Length > edgeIndex)
             {
-                if (!goalBounds.connectionBounds[GetGoalBoundingBoxIndex(goalBounds.connectionBounds)].PositionInsideBounds(connectionEdge.ToNode.Position)) return;
+                if (!goalBounds.connectionBounds[edgeIndex].PositionInsideBounds(connectionEdge.ToNode.LocalPosition)) return;
             }
 
             base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
-        }
-
-        protected int GetGoalBoundingBoxIndex(IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds[] bounds)
-        {
-            List<int> goalIndices = new List<int>();
-
-            for (int i = 0; i < bounds.Length; i++)
-            {
-                if (IsInBounds(this.GoalPosition, bounds[i])) goalIndices.Add(i);
-            }
-
-            if (goalIndices.Count == 1) return goalIndices[0];
-            else
-            {
-                float bestArea = -1f;
-                for (int j = 0; j < goalIndices.Count; j++)
-                {
-                    IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds boundingBox = bounds[goalIndices[j]];
-                    float boxArea = (boundingBox.maxx - boundingBox.minx) * (boundingBox.maxz - boundingBox.minz);
-                    if (bestArea < 0f || boxArea < bestArea)
-                    {
-                        bestArea = boxArea;
-                        return goalIndices[j];
-                    }
-                }
-            }
-            return -1;
         }
 
         protected bool IsInBounds(Vector3 position, IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)

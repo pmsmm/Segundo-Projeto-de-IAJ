@@ -54,8 +54,8 @@ public class PathfindingManager : MonoBehaviour {
         this.currentClickNumber = 1;
 
         //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new AStarPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new NodePriorityHeap(), new DictionaryList(), new EucledianDistanceHeuristic()));
-        //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new NodeArrayAStarPathFinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic()));
-        this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new GoalBoundingPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic(), AssetDatabase.LoadAssetAtPath<Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.GoalBoundingTable>("Assets/Resources/GoalBoundingTable.asset")));
+        this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new NodeArrayAStarPathFinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic()));
+        //this.Initialize(NavigationManager.Instance.NavMeshGraphs[0], new GoalBoundingPathfinding(NavigationManager.Instance.NavMeshGraphs[0], new EucledianDistanceHeuristic(), AssetDatabase.LoadAssetAtPath<Assets.Scripts.IAJ.Unity.Pathfinding.DataStructures.GoalBounding.GoalBoundingTable>("Assets/Resources/GoalBoundingTable.asset")));
     }
 
     // Update is called once per frame
@@ -128,7 +128,6 @@ public class PathfindingManager : MonoBehaviour {
             }
 	    }
 	}
-
 
     protected void ResetNodeRecord(NodeRecord node)
     {
