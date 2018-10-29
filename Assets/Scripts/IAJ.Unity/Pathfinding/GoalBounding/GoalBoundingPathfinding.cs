@@ -28,14 +28,15 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
         protected override void ProcessChildNode(NodeRecord parentNode, NavigationGraphEdge connectionEdge, int edgeIndex)
         {
-            int ind = parentNode.node.NodeIndex;
             NodeGoalBounds goalBounds = this.GoalBoundingTable.table[parentNode.node.NodeIndex];
             if (goalBounds != null && goalBounds.connectionBounds.Length > edgeIndex)
             {
                 if (!goalBounds.connectionBounds[edgeIndex].PositionInsideBounds(connectionEdge.ToNode.LocalPosition)) return;
             }
-
-            base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
+            else
+            {
+                base.ProcessChildNode(parentNode, connectionEdge, edgeIndex);
+            }
         }
 
         protected bool IsInBounds(Vector3 position, IAJ.Unity.Pathfinding.DataStructures.GoalBounding.Bounds bounds)

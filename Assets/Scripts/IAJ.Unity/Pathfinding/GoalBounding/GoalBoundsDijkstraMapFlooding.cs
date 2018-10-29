@@ -42,8 +42,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
             startNodeRecord.gValue = 0f;
             this.Open.AddToOpen(startNodeRecord);
 
-            for (int j = 0; j < startNode.OutEdgeCount; j++) this.NodeRecordArray.GetNodeRecord(startNode.EdgeOut(j).ToNode).id = j;
-
             while (this.Open.CountOpen() > 0)
             {
                 NodeRecord Node = this.Open.GetBestAndRemove();
@@ -52,40 +50,51 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding.GoalBounding
 
                 for (int i = 0; i < Node.node.OutEdgeCount; i++)
                 {
-                    ProcessChildNode(Node, Node.node.EdgeOut(i));
+                    ProcessChildNode(Node, Node.node.EdgeOut(i), i);
                 }
             }
 
             this.Open.Initialize();
         }
 
-        protected void ProcessChildNode(NodeRecord parent, NavigationGraphEdge connectionEdge)
+        protected void ProcessChildNode(NodeRecord BestNode, NavigationGraphEdge connectionEdge, int connectionIndex)
         {
-            NodeRecord node = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
-            if (node.status == NodeStatus.Closed) return;
+            NavigationGraphNode childNode = connectionEdge.ToNode;
+            NodeRecord childRecord = this.NodeRecordArray.GetNodeRecord(connectionEdge.ToNode);
 
-            float g = parent.gValue + (node.node.LocalPosition - parent.node.LocalPosition).magnitude;
-
-            if (node.status == NodeStatus.Unvisited)
+            if (childRecord == null)
             {
-                UpdateNodeRecord(node, connectionEdge.ToNode, parent, g);
-                this.Open.AddToOpen(node);
+                childRecord = new NodeRecord
+                {
+                    node = childNode,
+                    parent = BestNode,
+                    status = NodeStatus.Unvisited
+                };
+                this.NodeRecordArray.AddSpecialCaseNode(childRecord);
             }
-            else if (node.gValue > g)
+
+            if (childRecord.status == NodeStatus.Closed) return;
+
+            float g = BestNode.gValue + (childRecord.node.LocalPosition - BestNode.node.LocalPosition).magnitude;
+
+            if (childRecord.status == NodeStatus.Unvisited)
             {
-                NodeRecord open = this.Open.SearchInOpen(node);
-                UpdateNodeRecord(node, connectionEdge.ToNode, parent, g);
-                this.Open.Replace(open, node);
+                UpdateNodeRecord(childRecord, BestNode, g, connectionIndex);
+                this.Open.AddToOpen(childRecord);
+            }
+            else if (childRecord.gValue > g)
+            {
+                UpdateNodeRecord(childRecord, BestNode, g, connectionIndex);
+                this.Open.Replace(childRecord, childRecord);
             }
         }
 
-        protected void UpdateNodeRecord(NodeRecord node, NavigationGraphNode graphNode, NodeRecord parent, float g)
-        {
+        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g, int connectionIndex)
+        {                
             node.gValue = g;
             node.fValue = g;
-            node.node = graphNode;
             node.parent = parent;
-            if (parent.id != -1) node.id = parent.id;
+            node.id = connectionIndex;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)
