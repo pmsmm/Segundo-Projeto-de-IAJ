@@ -84,16 +84,14 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
             if (openNode != null)
             {
-                if (!(childNode.fValue > openNode.fValue))
-                {
-                    if (childNode.fValue < openNode.fValue || childNode.hValue < openNode.hValue)
-                        this.Open.Replace(openNode, childNode);
-                }
+                int comparison = childNode.fValue.CompareTo(openNode.fValue);
+                if (comparison > 0) return;
+
+                if (comparison < 0 || childNode.hValue < openNode.hValue) this.Open.Replace(openNode, childNode);
             }
-            else
+            else if (this.Closed.SearchInClosed(childNode) == null)
             {
-                NodeRecord closedNode = this.Closed.SearchInClosed(childNode);
-                if (closedNode == null) this.Open.AddToOpen(childNode);
+                this.Open.AddToOpen(childNode);
             }
         }
 
