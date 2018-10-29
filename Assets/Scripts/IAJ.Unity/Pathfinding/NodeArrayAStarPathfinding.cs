@@ -22,7 +22,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
         protected override void ProcessChildNode(NodeRecord bestNode, NavigationGraphEdge connectionEdge, int edgeIndex)
         {
             var childNode = connectionEdge.ToNode;
-            var childNodeRecord = this.NodeRecordArray.GetNodeRecord(childNode);
+            NodeRecord childNodeRecord = this.NodeRecordArray.GetNodeRecord(childNode);
 
             if (childNodeRecord == null)
             {
@@ -47,41 +47,26 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
 
             if (childNodeRecord.status == NodeStatus.Unvisited)
             {
-                UpdateNodeRecord(childNodeRecord, bestNode, connectionEdge.ToNode, g, h, f);
+                UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
                 this.Open.AddToOpen(childNodeRecord);
             }
             else if (!(childNodeRecord.fValue < f))
             {
-                if (childNodeRecord.fValue < f || childNodeRecord.hValue < h)
+                if (childNodeRecord.fValue > f || childNodeRecord.hValue > h)
                 {
-                    NodeRecord open = this.Open.SearchInOpen(childNodeRecord);
-                    UpdateNodeRecord(childNodeRecord, bestNode, connectionEdge.ToNode, g, h, f);
-                    this.Open.Replace(open, childNodeRecord);
+                    this.Open.RemoveFromOpen(childNodeRecord);
+                    UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
+                    this.Open.AddToOpen(childNodeRecord);
                 }
             }
         }
 
-        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, NavigationGraphNode edgeNode, float g, float h, float f)
+        protected void UpdateNodeRecord(NodeRecord node, NodeRecord parent, float g, float h, float f)
         {
             node.parent = parent;
-            node.id = parent.id;
-            node.node = edgeNode;
             node.gValue = g;
             node.hValue = h;
             node.fValue = f;
-        }
-
-        protected override void Finished()
-        {
-            this.Open.Initialize();
-        }
-
-        protected void ResetNodeRecord(NodeRecord node)
-        {
-            node.status = NodeStatus.Unvisited;
-            node.gValue = 0f;
-            node.id = -1;
-            node.parent = null;
         }
 
         private List<NavigationGraphNode> GetNodesHack(NavMeshPathGraph graph)

@@ -108,7 +108,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 {
                     solution = null;
                     this.InProgress = false;
-                    Finished();
                     return true;
                 }
                 else if (openCount > MaxOpenNodes) MaxOpenNodes = openCount;
@@ -118,7 +117,6 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 {
                     this.InProgress = false;
                     solution = this.CalculateSolution(Node, false);
-                    Finished();
                     return true;
                 }
 
@@ -131,18 +129,13 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 TotalExploredNodes++;
                 count++;
 
-                if (count >= 20)
+                if (count >= 50)
                 {
                     this.InProgress = true;
                     solution = this.CalculateSolution(Node, true);
                     return false;
                 }
             }
-
-        }
-
-        protected virtual void Finished()
-        {
 
         }
 
