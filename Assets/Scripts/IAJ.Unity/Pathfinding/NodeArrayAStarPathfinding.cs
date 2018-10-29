@@ -50,9 +50,12 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);
                 this.Open.AddToOpen(childNodeRecord);
             }
-            else if (!(childNodeRecord.fValue < f))
+            else
             {
-                if (childNodeRecord.fValue > f || childNodeRecord.hValue > h)
+                int comparison = f.CompareTo(childNodeRecord.fValue);
+                if (comparison > 0) return;
+
+                if (comparison < 0 || childNodeRecord.hValue > h)
                 {
                     this.Open.RemoveFromOpen(childNodeRecord);
                     UpdateNodeRecord(childNodeRecord, bestNode, g, h, f);

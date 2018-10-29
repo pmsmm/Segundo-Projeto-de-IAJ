@@ -129,7 +129,7 @@ namespace Assets.Scripts.IAJ.Unity.Pathfinding
                 TotalExploredNodes++;
                 count++;
 
-                if (count >= 50)
+                if (count >= 20)
                 {
                     this.InProgress = true;
                     solution = this.CalculateSolution(Node, true);
